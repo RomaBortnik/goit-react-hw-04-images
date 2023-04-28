@@ -10,7 +10,7 @@ const Modal = ({ image, tags, onClose }) => {
   useEffect(() => {
     window.addEventListener('keydown', handleKeydown);
     return () => window.removeEventListener('keydown', handleKeydown);
-  }, []);
+  });
 
   const handleKeydown = e => {
     if (e.code === 'Escape') {
