@@ -6,7 +6,6 @@ import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
 import fetchImages from 'services/pixabay-api';
 import Button from './Button';
-import Modal from './Modal';
 import Loader from './Loader';
 
 const INITIAL_STATE = {
@@ -14,9 +13,6 @@ const INITIAL_STATE = {
   images: [],
   imagesPerPage: 0,
   pageNumber: 1,
-  showModal: false,
-  currentImage: null,
-  tags: '',
   isLoading: false,
   error: null,
 };
@@ -68,24 +64,8 @@ export class App extends Component {
     this.setState(({ pageNumber }) => ({ pageNumber: pageNumber + 1 }));
   };
 
-  onOpenModal = (currentImage, tags) => {
-    this.setState({ showModal: true, currentImage, tags });
-  };
-
-  onCloseModal = () => {
-    this.setState({ showModal: false, currentImage: '', tags: '' });
-  };
-
   render() {
-    const {
-      images,
-      imagesPerPage,
-      showModal,
-      currentImage,
-      isLoading,
-      tags,
-      error,
-    } = this.state;
+    const { images, imagesPerPage, isLoading, error } = this.state;
 
     return (
       <>
@@ -100,9 +80,6 @@ export class App extends Component {
         {imagesPerPage === 12 ? (
           <Button onClick={this.onLoadMoreClick} />
         ) : null}
-        {/* {showModal && (
-          <Modal image={currentImage} onClose={this.onCloseModal} tags={tags} />
-        )} */}
         {error && <p>{error}</p>}
         <ToastContainer autoClose={2000} theme="dark"></ToastContainer>
       </>

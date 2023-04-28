@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ImageGalleryItem from 'components/ImageGalleryItem';
 import Gallery from './ImageGallery.styled';
 
-const ImageGallery = ({ images, openModal }) => {
+const ImageGallery = ({ images }) => {
   return (
     <>
       <Gallery>
@@ -15,7 +15,6 @@ const ImageGallery = ({ images, openModal }) => {
               smallImage={webformatURL}
               largeImage={largeImageURL}
               tags={tags}
-              openModal={openModal}
             ></ImageGalleryItem>
           );
         })}
@@ -33,7 +32,6 @@ ImageGallery.propTypes = {
       tags: PropTypes.string.isRequired,
     })
   ).isRequired,
-  openModal: PropTypes.func.isRequired,
 };
 
 export default ImageGallery;

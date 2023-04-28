@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Modal from 'components/Modal';
 import { GalleryItem, GalleryImage } from './ImageGalleryItem.styled';
 
-const ImageGalleryItem = ({ smallImage, largeImage, tags, openModal }) => {
+const ImageGalleryItem = ({ smallImage, largeImage, tags }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
@@ -26,7 +26,6 @@ const ImageGalleryItem = ({ smallImage, largeImage, tags, openModal }) => {
 ImageGalleryItem.propTypes = {
   smallImage: PropTypes.string.isRequired,
   largeImage: PropTypes.string.isRequired,
-  openModal: PropTypes.func.isRequired,
   tags: PropTypes.string.isRequired,
 };
 

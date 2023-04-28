@@ -34,21 +34,15 @@ class Modal extends Component {
 
   render() {
     const { image, tags } = this.props;
-    return (
+
+    return createPortal(
       <Overlay onClick={this.handleBackdropClick}>
         <ModalImage className="Modal">
           <img src={image} alt={tags} />
         </ModalImage>
-      </Overlay>
+      </Overlay>,
+      modalRoot
     );
-    // return createPortal(
-    //   <Overlay onClick={this.handleBackdropClick}>
-    //     <ModalImage className="Modal">
-    //       <img src={image} alt={tags} />
-    //     </ModalImage>
-    //   </Overlay>,
-    //   modalRoot
-    // );
   }
 }
 
