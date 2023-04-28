@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -8,81 +8,71 @@ import fetchImages from 'services/pixabay-api';
 import Button from './Button';
 import Loader from './Loader';
 
-const INITIAL_STATE = {
-  query: '',
-  images: [],
-  imagesPerPage: 0,
-  pageNumber: 1,
-  isLoading: false,
-  error: null,
-};
+export const App = () => {
+  const [query, setQuery] = useState('');
+  const [images, setImages] = useState([]);
+  const [imagesPerPage, setImagesPerPage] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-export class App extends Component {
-  state = { ...INITIAL_STATE };
-
-  async componentDidUpdate(prevProps, prevState) {
-    const { query, pageNumber } = this.state;
-    if (prevState.query !== query || prevState.pageNumber !== pageNumber) {
-      await this.getImages(query, pageNumber);
+  useEffect(() => {
+    if (query === '') {
+      return;
     }
-    if (prevState.query === query && prevState.pageNumber !== pageNumber) {
-      setTimeout(() => {
-        window.scrollBy({
-          top: window.innerHeight - 158,
-          behavior: 'smooth',
-        });
-      }, 100);
-    }
-  }
+    getImages(query, pageNumber);
+  }, [query, pageNumber]);
 
-  getImages = async (query, pageNumber) => {
+  const getImages = async (query, pageNumber) => {
     try {
-      this.setState({ isLoading: true });
+      setIsLoading(true);
       const data = await fetchImages(query, pageNumber);
-      data.hits.length === 0
-        ? toast.error(
-            'Sorry, there are no images matching your search query. Please try again.'
-          )
-        : this.setState(({ images }) => ({
-            images: [...images, ...data.hits],
-            imagesPerPage: data.hits.length,
-          }));
+      if (data.hits.length === 0) {
+        return toast.error(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      } else {
+        setImages(prevValue => [...prevValue, ...data.hits]);
+        setImagesPerPage(data.hits.length);
+      }
     } catch (error) {
-      this.setState({ error });
+      setError(error);
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(false);
+      if (pageNumber !== 1) {
+        setTimeout(() => {
+          window.scrollBy({
+            top: window.innerHeight - 158,
+            behavior: 'smooth',
+          });
+        }, 100);
+      }
     }
   };
 
-  handleSubmit = query => {
-    query.trim() === this.state.query.trim()
-      ? toast.error('Sorry, you entered a previous query. Please try again.')
-      : this.setState({ ...INITIAL_STATE, query });
+  const handleSubmit = value => {
+    if (value.trim() === query.trim()) {
+      toast.error('Sorry, you entered a previous query. Please try again.');
+    } else {
+      setQuery(value);
+      setImages([]);
+      setImagesPerPage(0);
+      setPageNumber(1);
+      setIsLoading(false);
+      setError(null);
+    }
   };
 
-  onLoadMoreClick = () => {
-    this.setState(({ pageNumber }) => ({ pageNumber: pageNumber + 1 }));
-  };
-
-  render() {
-    const { images, imagesPerPage, isLoading, error } = this.state;
-
-    return (
-      <>
-        <Searchbar onSubmit={this.handleSubmit} />
-        {isLoading && <Loader></Loader>}
-        {images.length !== 0 && (
-          <ImageGallery
-            images={images}
-            openModal={this.onOpenModal}
-          ></ImageGallery>
-        )}
-        {imagesPerPage === 12 ? (
-          <Button onClick={this.onLoadMoreClick} />
-        ) : null}
-        {error && <p>{error}</p>}
-        <ToastContainer autoClose={2000} theme="dark"></ToastContainer>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <Searchbar onSubmit={handleSubmit} />
+      {isLoading && <Loader></Loader>}
+      {images.length !== 0 && <ImageGallery images={images}></ImageGallery>}
+      {imagesPerPage === 12 ? (
+        <Button onClick={() => setPageNumber(prevValue => prevValue + 1)} />
+      ) : null}
+      {error && <p>{error}</p>}
+      <ToastContainer autoClose={2000} theme="dark"></ToastContainer>
+    </>
+  );
+};
