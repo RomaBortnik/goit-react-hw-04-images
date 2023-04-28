@@ -4,7 +4,7 @@ import SubmitButton from './Button.styled';
 
 const Button = ({ onClick }) => {
   return (
-    <SubmitButton type="button" onClick={onClick} aria-label="submit">
+    <SubmitButton type="button" onClick={onClick}>
       Load more
     </SubmitButton>
   );
